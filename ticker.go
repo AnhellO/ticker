@@ -6,33 +6,33 @@ import (
 	"time"
 )
 
-// A Ticker holds a channel that delivers ticks at intervals.
-type Ticker struct {
-	C       chan time.Time // The channel on which ticks are delivered.
-	d       time.Duration
-	mu      sync.Mutex
-	running bool
-	stop    chan bool
+// A CustomTicker holds a channel that delivers ticks at intervals.
+type CustomTicker struct {
+	Ticks    chan time.Time // The channel on which ticks are delivered.
+	duration time.Duration
+	mu       sync.Mutex
+	running  bool
+	stop     chan bool
 }
 
 // New returns a new ticker that ticks every d seconds. It adjusts the
 // intervals or drops ticks to make up for slow receivers. The ticker
 // is initially in the stopped state.
-func New(d time.Duration) *Ticker {
-	if d <= 0 {
+func New(duration time.Duration) *CustomTicker {
+	if duration <= 0 {
 		panic("ticker: non-positive duration")
 	}
-	return &Ticker{
-		C:       make(chan time.Time),
-		d:       d,
-		running: false,
-		stop:    make(chan bool),
+	return &CustomTicker{
+		Ticks:    make(chan time.Time),
+		duration: duration,
+		running:  false,
+		stop:     make(chan bool),
 	}
 }
 
 // Start (re-)starts the ticker. Ticks will be delivered on the ticker's
 // channel until Stop is called.
-func (t *Ticker) Start() {
+func (t *CustomTicker) Start() {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	if !t.running {
@@ -43,7 +43,7 @@ func (t *Ticker) Start() {
 
 // Stop stops the ticker. No ticks will be delivered on the ticker's channel
 // after Stop returns and before Start is called again.
-func (t *Ticker) Stop() {
+func (t *CustomTicker) Stop() {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	if t.running {
@@ -53,19 +53,19 @@ func (t *Ticker) Stop() {
 }
 
 // Stopped returns whether the ticker is stopped.
-func (t *Ticker) Stopped() bool {
+func (t *CustomTicker) Stopped() bool {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	return !t.running
 }
 
-func (t *Ticker) loop() {
-	tk := time.NewTicker(t.d)
+func (t *CustomTicker) loop() {
+	tk := time.NewTicker(t.duration)
 	for {
 		select {
 		case tm := <-tk.C:
 			select {
-			case t.C <- tm:
+			case t.Ticks <- tm:
 			default:
 			}
 		case <-t.stop:

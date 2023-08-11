@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func TestTicker(t *testing.T) {
+func TestCustomTicker(t *testing.T) {
 	const delta = 100 * time.Millisecond
 	const count = 5
 
@@ -13,27 +13,27 @@ func TestTicker(t *testing.T) {
 
 	time.Sleep(2 * delta)
 	select {
-	case <-ticker.C:
+	case <-ticker.Ticks:
 		t.Fatal("ticker created in started state")
 	default:
 	}
 
 	ticker.Start()
 	for i := 0; i < count; i++ {
-		<-ticker.C
+		<-ticker.Ticks
 	}
 	ticker.Stop()
 
 	time.Sleep(2 * delta)
 	select {
-	case <-ticker.C:
+	case <-ticker.Ticks:
 		t.Fatal("ticker did not stop")
 	default:
 	}
 
 	ticker.Start()
 	for i := 0; i < count; i++ {
-		<-ticker.C
+		<-ticker.Ticks
 	}
 	ticker.Stop()
 }
