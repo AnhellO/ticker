@@ -15,13 +15,14 @@ type CustomTicker struct {
 	stop     chan bool
 }
 
-// New returns a new ticker that ticks every d seconds. It adjusts the
+// NewCustomTicker returns a new ticker that ticks every d seconds. It adjusts the
 // intervals or drops ticks to make up for slow receivers. The ticker
 // is initially in the stopped state.
-func New(duration time.Duration) *CustomTicker {
+func NewCustomTicker(duration time.Duration) *CustomTicker {
 	if duration <= 0 {
 		panic("ticker: non-positive duration")
 	}
+
 	return &CustomTicker{
 		Ticks:    make(chan time.Time),
 		duration: duration,

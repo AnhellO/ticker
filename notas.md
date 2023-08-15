@@ -15,4 +15,14 @@
         - <https://awesome-go.com/job-scheduler/>
         - <https://www.reddit.com/r/golang/comments/t50280/distributed_job_scheduling_with_go/>
 - Pensar en una interface
-
+- Casos de uso
+    - Transactor
+        - Leer de un storage
+    - Channel
+        - Leer config desde un endpoint
+        - Mantener data actualizada
+        - No tenemos storage como tal
+        - Varios channels por bandera
+    - Ticker
+        - Manejar como una dependencia en `deps.go`
+        - Evitar objeto singleton

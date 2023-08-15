@@ -6,10 +6,10 @@ import (
 )
 
 func TestCustomTicker(t *testing.T) {
-	const delta = 100 * time.Millisecond
+	const delta = 1 * time.Second
 	const count = 5
 
-	ticker := New(delta)
+	ticker := NewCustomTicker(delta)
 
 	time.Sleep(2 * delta)
 	select {
@@ -44,5 +44,5 @@ func TestDuration(t *testing.T) {
 			t.Fatal("New should have panicked")
 		}
 	}()
-	New(-1)
+	NewCustomTicker(-1)
 }
