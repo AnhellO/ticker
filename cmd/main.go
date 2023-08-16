@@ -1,46 +1,31 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
-	"os"
+	"time"
+
+	"github.com/AnhellO/ticker/internal/file"
+	"github.com/AnhellO/ticker/internal/ticker"
 )
 
-// Users struct which contains
-// an array of users
-type Users struct {
-	Users []User `json:"users"`
-}
-
-// User struct which contains the
-// information belonging to a user
-type User struct {
-	ID        int    `json:"id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Email     string `json:"email"`
-	Gender    string `json:"gender"`
-	IpAddress string `json:"ip_address"`
-}
+// cache represents the in-memory cache used for r+w
+var cache map[string]interface{}
 
 func main() {
-	users, err := getData("./mock-data.json")
-	if err != nil {
-		log.Fatalf("error %+v", err)
+	// cache initialization
+	cache = map[string]interface{}{
+		"file": file.Users{},
 	}
 
-	fmt.Println(users)
-}
+	refresher := ticker.NewTickerRefresher(6*time.Second, "wrong-key")
+	go refresher.Refresh(cache)
 
-func getData(filename string) (Users, error) {
-	var users Users
+	go func() {
+		for i := 0; i < 10; i++ {
+			fmt.Printf("%+v\n", cache)
+			time.Sleep(10 * time.Second)
+		}
+	}()
 
-	contents, err := os.ReadFile(filename)
-	if err != nil {
-		return users, err
-	}
-
-	err = json.Unmarshal(contents, &users)
-	return users, err
+	time.Sleep(100 * time.Second)
 }

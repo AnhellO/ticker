@@ -1,8 +1,8 @@
 {
-    "some-data": {},
-    "more-data": {},
-    "validations": {},
-    "response_codes": {
+    "data-source-1": {},
+    "data-source-2": {},
+    "data-source-3": {},
+    "response-codes": {
         "visa": {
             "approved": {
                 "partial_approval": "10",
